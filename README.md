@@ -48,13 +48,13 @@ Both `"up"` and `"down"` callback functions are equipped with:
     }];
 
 ### Run the migration
-`php index.php migrate` will run in sequence all migration files that have not been run.
+Running `php index.php migrate` in terminal console will run in sequence all migration files that have not been run.
 
-To run migration certain steps ahead, you can use `php index.php migrate run NUMBER_OF_STEPS`
+To run migration certain steps ahead, you can use `php index.php migrate run NUMBER_OF_STEPS` command.
 **Eg.** `php index.php migrate run 3` will run 3 next migration files
 
 ### Revert (rollback) the migration
-`php index.php migrate rollback` will revert all migration files in inverse direction.
+Running `php index.php migrate rollback` in console will revert all migration files in inverse direction.
 
 To revert certain steps back, you can use `php index.php migrate rollback NUMBER_OF_STEPS`
 **Eg.** `php index.php migrate rollback 1` will revert just 1 migration file that has already been run before.
@@ -63,7 +63,7 @@ To revert certain steps back, you can use `php index.php migrate rollback NUMBER
 Seed files are actually contains normal PHP codes, so you can literally put anything in there, including the expected purpose - seeding your database.
 
 ### Create a seed file
-`php index.php seed create FILE_NAME`
+Run `php index.php seed create FILE_NAME` in console.
 
 **Eg.** `php index.php seed create Users` will create a file called `Users.php` in `application/seed` directory of your project with following content:
 
@@ -88,7 +88,7 @@ The function is equipped with `$db` which is CodeIgniter's [database object](htt
 Above example uses syntax of [Eloquent ORM](https://laravel.com/docs/5.8/eloquent) for the callback.
 
 ### Run the seed
-- `php index.php seed run SEED_NAME` will run a seed file, while
+- Run `php index.php seed run SEED_NAME` in console will run a seed file, while
 - `php index.php seed` will run all seed files
 
 # Running Migrations and Seeds in Web Browser
