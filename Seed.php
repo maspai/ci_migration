@@ -10,7 +10,7 @@ class Seed extends CI_Controller
 
 	public function run($seed = null) {
 		try {
-			if (!$seed_files = array_values(array_diff(scandir(self::DIR), ['.', '..', 'index.html'])))
+			if (!$seed_files = $this->allSeeds())
 				throw new Exception("No seed found", 1);
 
 			$start_time = microtime(true);
@@ -41,7 +41,7 @@ class Seed extends CI_Controller
 			exit("Invalid seed".PHP_EOL);
 			
 		call_user_func($code, $this->db);
-		echo "$file executed".PHP_EOL;
+		echo "$file done".PHP_EOL;
 	}
 
 	public function create($name) {
@@ -62,7 +62,16 @@ class Seed extends CI_Controller
 		}
 	}
 
-	public function 
+	public function list() {
+		if (!$list = $this->allSeeds())
+			exit("No seed found".PHP_EOL);
+
+		echo implode(PHP_EOL, $list).PHP_EOL;
+	}
+
+	private function allSeeds() {
+		return array_values(array_diff(scandir(self::DIR), ['.', '..', 'index.html']));
+	}
 
 	private function checkRequirements() {
 		try {
