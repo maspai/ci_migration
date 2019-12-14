@@ -1,5 +1,5 @@
 # ci_migration
-Database migration and seeding for CodeIgniter framework
+Simple and easy database migration and seeding for CodeIgniter framework
 
 # Installation
 Simply put the two classes into `application/controllers` directory of your CodeIgniter project.
