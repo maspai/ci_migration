@@ -59,6 +59,22 @@ Running `php index.php migrate rollback` in console will revert all migration fi
 To revert certain steps back, you can use `php index.php migrate rollback NUMBER_OF_STEPS`
 **Eg.** `php index.php migrate rollback 1` will revert just 1 migration file that has already been run before.
 
+### List of migrations
+- `php index.php migrate past` to get list of migrations that already run successfully before.
+
+**Result eg.**
+
+    2019-12-14 09:40:21 1576052117_users.php
+    2019-12-14 09:40:21 1576052137_roles.php
+    2019-12-14 09:40:21 1576052148_user_roles.php
+    
+- `php index.php migrate future` to get list of migrations that has not run.
+
+**Result eg.**
+
+    1576052156_permissions.php
+    1576052206_permission_groups.php
+
 # Seed
 Seed files are actually contains normal PHP codes, so you can literally put anything in there, including the expected purpose - seeding your database.
 
@@ -90,6 +106,15 @@ Above example uses syntax of [Eloquent ORM](https://laravel.com/docs/5.8/eloquen
 ### Run the seed
 - Run `php index.php seed run SEED_NAME` in console will run a seed file, while
 - `php index.php seed` will run all seed files
+
+### List of seeds
+`php index.php seed list` to get list of all available seed files.
+
+**Result eg.**
+
+    Admin.php
+    AdminRolePermissions.php
+    Permissions.php
 
 # Running Migrations and Seeds in Web Browser
 Thanks to nature of CodeIgniter, all functions above can be run in your web browser as well.
