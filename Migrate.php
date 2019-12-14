@@ -107,6 +107,7 @@ class Migrate extends CI_Controller
 			function($migration) { return $migration->run_at.' '.$migration->migration; },
 			$this->executedMigrations(false)
 		));
+		$this->output->set_header('Content-type: text/plain');
 		echo ($list ? $list : 'No migration found').PHP_EOL;
 	}
 
@@ -123,10 +124,8 @@ class Migrate extends CI_Controller
 			}
 		}
 
-		if (!$this->migrationFiles)
-			exit("All migrations already executed".PHP_EOL);
-
-		echo implode(PHP_EOL, $this->migrationFiles).PHP_EOL;
+		$this->output->set_header('Content-type: text/plain');
+		echo ($this->migrationFiles ? implode(PHP_EOL, $this->migrationFiles) : "All migrations already executed") . PHP_EOL;
 	}
 
 	private function checkRequirements() {

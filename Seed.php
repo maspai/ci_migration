@@ -72,10 +72,8 @@ class Seed extends CI_Controller
 	}
 
 	public function list() {
-		if (!$list = $this->allSeeds())
-			exit("No seed found".PHP_EOL);
-
-		echo implode(PHP_EOL, $list).PHP_EOL;
+		$this->output->set_header('Content-type: text/plain');
+		echo (($list = $this->allSeeds()) ? implode(PHP_EOL, $list) : "No seed found") . PHP_EOL;
 	}
 
 	private function allSeeds() {
