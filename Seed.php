@@ -8,6 +8,7 @@ class Seed extends CI_Controller
 		$this->run();
 	}
 
+	//-- $seed: SEED | SEED1-SEED2-SEED3
 	public function run($seed = null) {
 		try {
 			if (!$seed_files = $this->allSeeds())
@@ -16,10 +17,18 @@ class Seed extends CI_Controller
 			$start_time = microtime(true);
 
 			if ($seed) {
-				if (!in_array($file = "$seed.php", $seed_files))
-					throw new Exception("$seed not found", 1);
-					
-				$this->runFile($file);
+				$invalid_seeds = [];
+				foreach (explode('-', $seed) as $seed) {
+					if (!in_array($file = "$seed.php", $seed_files)) {
+						$invalid_seeds[] = $seed;
+						continue;
+					}
+
+					$this->runFile($file);
+				}
+
+				if ($invalid_seeds)
+					throw new Exception(implode(', ', $invalid_seeds)." not found", 1);
 			}
 			else {
 				foreach ($seed_files as $key => $file) {
