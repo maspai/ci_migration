@@ -25,7 +25,7 @@ class Migrate extends CI_Controller
 			$start_time = microtime(true);
 
 			foreach ($this->migrationFiles as $i => $file) {
-				echo "$file runs".PHP_EOL;
+				echo "Processing $file".PHP_EOL;
 				$code = require(self::MIGRATION_DIR.DIRECTORY_SEPARATOR.$file);
 
 				if (!isset($code['up']) || !is_callable($code['up']))
@@ -33,7 +33,7 @@ class Migrate extends CI_Controller
 					
 				call_user_func($code['up'], $this->dbforge, $this->db);
 				$this->db->insert(self::MIGRATION_TABLE, ['migration' => $file]);
-				echo "$file migrated".PHP_EOL;
+				echo "$file done".PHP_EOL;
 
 				if ($step && ($i + 1) >= $step)
 					break;
@@ -55,7 +55,7 @@ class Migrate extends CI_Controller
 
 			foreach ($prev_migrations as $i => $migration) {
 				if (file_exists($path = self::MIGRATION_DIR.DIRECTORY_SEPARATOR.($file = $migration->migration))) {
-					echo "$file runs".PHP_EOL;
+					echo "Rolling back $file".PHP_EOL;
 					$code = require($path);
 
 					if (!isset($code['down']) || !is_callable($code['down']))
@@ -63,7 +63,7 @@ class Migrate extends CI_Controller
 						
 					call_user_func($code['down'], $this->dbforge, $this->db);
 					$this->db->delete(self::MIGRATION_TABLE, ['migration' => $migration->migration]);
-					echo "$file rolled back".PHP_EOL;
+					echo "$file done".PHP_EOL;
 				}
 
 				if ($step && ($i + 1) >= $step)
