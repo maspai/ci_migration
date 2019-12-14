@@ -49,7 +49,7 @@ class Seed extends CI_Controller
 		if (!$code || !is_callable($code))
 			exit("Invalid seed".PHP_EOL);
 			
-		call_user_func($code, $this->db);
+		call_user_func($code, $this->db, new Callbacks($this));
 		echo "$file done".PHP_EOL;
 	}
 
@@ -96,5 +96,17 @@ class Seed extends CI_Controller
 		parent::__construct();
 		$this->load->database();
 		$this->checkRequirements();
+	}
+}
+
+class Callbacks {
+	private $seeder;
+
+	public function __construct($seeder) {
+		$this->seeder = $seeder;
+	}
+
+	public function seed($seed) {
+		$this->seeder->run($seed);
 	}
 }
