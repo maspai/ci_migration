@@ -105,7 +105,13 @@ Above example uses syntax of [Eloquent ORM](https://laravel.com/docs/5.8/eloquen
 
 ### Run the seed
 - Run `php index.php seed run SEED_NAME` in console will run a seed file
-- `php index.php seed SEED_NAME1-SEED_NAME2-SEED_NAME3` will run specific seed files
+
+**Eg.**
+`php index.php seed run AdminUsers`
+- `php index.php seed SEED_NAME1-SEED_NAME2-SEED_NAME3` will run many seed files at once
+
+**Eg.**
+`php index.php seed run AdminUsers-AdminPermissions`
 - `php index.php seed` will run all seed files
 
 ### List of seeds
