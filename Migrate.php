@@ -103,11 +103,17 @@ class Migrate extends CI_Controller
 	}
 
 	public function past() {
-
+		$list = implode(PHP_EOL, array_map(
+			function($migration) { return $migration->run_at.' '.$migration->migration; },
+			$this->executedMigrations(false)
+		));
+		echo ($list ? $list : 'No migration found').PHP_EOL;
 	}
 
-	private function executedMigrations() {
-		return $this->db->order_by('migration', 'DESC')->get(self::MIGRATION_TABLE)->result();
+	private function executedMigrations($latest = true) {
+		return $this->db
+					->order_by('migration', $latest ? 'DESC' : 'ASC')
+					->get(self::MIGRATION_TABLE)->result();
 	}
 
 	public function next() {
