@@ -116,8 +116,17 @@ class Migrate extends CI_Controller
 					->get(self::MIGRATION_TABLE)->result();
 	}
 
-	public function next() {
+	public function future() {
+		if ($this->prevMigration) {
+			if (($last_migration_file = array_search($this->prevMigration, $this->migrationFiles)) !== false) {
+				array_splice($this->migrationFiles, 0, $last_migration_file + 1);
+			}
+		}
 
+		if (!$this->migrationFiles)
+			exit("All migrations already executed".PHP_EOL);
+
+		echo implode(PHP_EOL, $this->migrationFiles).PHP_EOL;
 	}
 
 	private function checkRequirements() {
