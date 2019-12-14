@@ -44,9 +44,9 @@ class Migrate extends CI_Controller
 							$down.PHP_EOL.
 						'}];'
 			);
-			echo "$name.php created\n";
+			echo "$name.php created".PHP_EOL;
 		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage()."\n");
+			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
 
@@ -56,11 +56,11 @@ class Migrate extends CI_Controller
 
 			if ($direction == 'down') {
 				if (!$prev_migrations = $this->db->order_by('migration', 'DESC')->get(self::MIGRATION_TABLE)->result())
-					exit("No migration to rollback\n");
+					exit("No migration to rollback".PHP_EOL);
 
 				foreach ($prev_migrations as $i => $migration) {
 					if (file_exists($path = self::MIGRATION_DIR.DIRECTORY_SEPARATOR.($file = $migration->migration))) {
-						echo "$file runs\n";
+						echo "$file runs".PHP_EOL;
 						$code = require($path);
 
 						if (!isset($code[$direction]) || !is_callable($code[$direction]))
@@ -68,7 +68,7 @@ class Migrate extends CI_Controller
 							
 						call_user_func($code[$direction], $this->dbforge, $this->db);
 						$this->db->delete(self::MIGRATION_TABLE, ['migration' => $migration->migration]);
-						echo "$file rolled back\n";
+						echo "$file rolled back".PHP_EOL;
 					}
 
 					if ($step && ($i + 1) >= $step)
@@ -77,10 +77,10 @@ class Migrate extends CI_Controller
 			}
 			else {
 				if (!$this->migrationFiles)
-					exit("No migration file found\n");
+					exit("No migration file found".PHP_EOL);
 
 				foreach ($this->migrationFiles as $i => $file) {
-					echo "$file runs\n";
+					echo "$file runs".PHP_EOL;
 					$code = require(self::MIGRATION_DIR.DIRECTORY_SEPARATOR.$file);
 
 					if (!isset($code[$direction]) || !is_callable($code[$direction]))
@@ -88,7 +88,7 @@ class Migrate extends CI_Controller
 						
 					call_user_func($code[$direction], $this->dbforge, $this->db);
 					$this->db->insert(self::MIGRATION_TABLE, ['migration' => $file]);
-					echo "$file migrated\n";
+					echo "$file migrated".PHP_EOL;
 
 					if ($step && ($i + 1) >= $step)
 						break;
@@ -96,9 +96,9 @@ class Migrate extends CI_Controller
 			}
 
 			$elapsed_time = round(microtime(true) - $start_time, 3) * 1000;
-			echo "Took $elapsed_time ms\n";
+			echo "Took $elapsed_time ms".PHP_EOL;
 		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage()."\n");
+			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
 
@@ -126,11 +126,11 @@ class Migrate extends CI_Controller
 			if (!file_exists($path = self::MIGRATION_DIR)) {
 				mkdir($path);
 				file_put_contents($path.DIRECTORY_SEPARATOR."index.html", '');
-				echo "$path directory created\n";
+				echo "$path directory created".PHP_EOL;
 			}
 			$this->migrationFiles = array_values(array_diff(scandir($path), ['.', '..', 'index.html']));
 		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage()."\n");
+			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
 

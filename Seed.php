@@ -28,20 +28,20 @@ class Seed extends CI_Controller
 			}
 
 			$elapsed_time = round(microtime(true) - $start_time, 3) * 1000;
-			echo "Took $elapsed_time ms\n";
+			echo "Took $elapsed_time ms".PHP_EOL;
 		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage()."\n");
+			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
 
 	private function runFile($file) {
-		echo "$file start\n";
+		echo "$file start".PHP_EOL;
 		$code = require(self::DIR.DIRECTORY_SEPARATOR.$file);
 		if (!$code || !is_callable($code))
-			exit("Invalid seed\n");
+			exit("Invalid seed".PHP_EOL);
 			
 		call_user_func($code, $this->db);
-		echo "$file executed\n";
+		echo "$file executed".PHP_EOL;
 	}
 
 	public function create($name) {
@@ -56,21 +56,23 @@ class Seed extends CI_Controller
 					"\t//code here".PHP_EOL.
 					'};'
 			);
-			echo "$name.php created\n";
+			echo "$name.php created".PHP_EOL;
 		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage()."\n");
+			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
+
+	public function 
 
 	private function checkRequirements() {
 		try {
 			if (!file_exists($path = self::DIR)) {
 				mkdir($path);
 				file_put_contents($path.DIRECTORY_SEPARATOR."index.html", '');
-				echo "$path directory created\n";
+				echo "$path directory created".PHP_EOL;
 			}
 		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage()."\n");
+			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
 
