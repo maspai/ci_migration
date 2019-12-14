@@ -18,11 +18,63 @@ class Migrate extends CI_Controller
 			}
 		}
 
-		$this->runMigrations('up', $step);
+		if (!$this->migrationFiles)
+			exit("No migration file found".PHP_EOL);
+
+		try {
+			$start_time = microtime(true);
+
+			foreach ($this->migrationFiles as $i => $file) {
+				echo "$file runs".PHP_EOL;
+				$code = require(self::MIGRATION_DIR.DIRECTORY_SEPARATOR.$file);
+
+				if (!isset($code['up']) || !is_callable($code['up']))
+					throw new Exception("($file) Invalid migration", 1);;
+					
+				call_user_func($code['up'], $this->dbforge, $this->db);
+				$this->db->insert(self::MIGRATION_TABLE, ['migration' => $file]);
+				echo "$file migrated".PHP_EOL;
+
+				if ($step && ($i + 1) >= $step)
+					break;
+			}
+
+			$elapsed_time = round(microtime(true) - $start_time, 3) * 1000;
+			echo "Took $elapsed_time ms".PHP_EOL;
+		} catch (Exception $e) {
+			exit("Error: ".$e->getMessage().PHP_EOL);
+		}
 	}
 
 	public function rollback($step = 0) {
-		$this->runMigrations('down', $step);
+		if (!$prev_migrations = $this->executedMigrations())
+			exit("No migration to rollback".PHP_EOL);
+
+		try {
+			$start_time = microtime(true);
+
+			foreach ($prev_migrations as $i => $migration) {
+				if (file_exists($path = self::MIGRATION_DIR.DIRECTORY_SEPARATOR.($file = $migration->migration))) {
+					echo "$file runs".PHP_EOL;
+					$code = require($path);
+
+					if (!isset($code['down']) || !is_callable($code['down']))
+						throw new Exception("($file) Invalid migration", 1);
+						
+					call_user_func($code['down'], $this->dbforge, $this->db);
+					$this->db->delete(self::MIGRATION_TABLE, ['migration' => $migration->migration]);
+					echo "$file rolled back".PHP_EOL;
+				}
+
+				if ($step && ($i + 1) >= $step)
+					break;
+			}
+
+			$elapsed_time = round(microtime(true) - $start_time, 3) * 1000;
+			echo "Took $elapsed_time ms".PHP_EOL;
+		} catch (Exception $e) {
+			exit("Error: ".$e->getMessage().PHP_EOL);
+		}
 	}
 
 	public function create($name, $table = null) {
@@ -50,56 +102,16 @@ class Migrate extends CI_Controller
 		}
 	}
 
-	private function runMigrations($direction, $step = 0) {
-		try {
-			$start_time = microtime(true);
+	public function past() {
 
-			if ($direction == 'down') {
-				if (!$prev_migrations = $this->db->order_by('migration', 'DESC')->get(self::MIGRATION_TABLE)->result())
-					exit("No migration to rollback".PHP_EOL);
+	}
 
-				foreach ($prev_migrations as $i => $migration) {
-					if (file_exists($path = self::MIGRATION_DIR.DIRECTORY_SEPARATOR.($file = $migration->migration))) {
-						echo "$file runs".PHP_EOL;
-						$code = require($path);
+	private function executedMigrations() {
+		return $this->db->order_by('migration', 'DESC')->get(self::MIGRATION_TABLE)->result();
+	}
 
-						if (!isset($code[$direction]) || !is_callable($code[$direction]))
-							throw new Exception("($file) Invalid migration", 1);
-							
-						call_user_func($code[$direction], $this->dbforge, $this->db);
-						$this->db->delete(self::MIGRATION_TABLE, ['migration' => $migration->migration]);
-						echo "$file rolled back".PHP_EOL;
-					}
+	public function next() {
 
-					if ($step && ($i + 1) >= $step)
-						break;
-				}
-			}
-			else {
-				if (!$this->migrationFiles)
-					exit("No migration file found".PHP_EOL);
-
-				foreach ($this->migrationFiles as $i => $file) {
-					echo "$file runs".PHP_EOL;
-					$code = require(self::MIGRATION_DIR.DIRECTORY_SEPARATOR.$file);
-
-					if (!isset($code[$direction]) || !is_callable($code[$direction]))
-						throw new Exception("($file) Invalid migration", 1);;
-						
-					call_user_func($code[$direction], $this->dbforge, $this->db);
-					$this->db->insert(self::MIGRATION_TABLE, ['migration' => $file]);
-					echo "$file migrated".PHP_EOL;
-
-					if ($step && ($i + 1) >= $step)
-						break;
-				}
-			}
-
-			$elapsed_time = round(microtime(true) - $start_time, 3) * 1000;
-			echo "Took $elapsed_time ms".PHP_EOL;
-		} catch (Exception $e) {
-			exit("Error: ".$e->getMessage().PHP_EOL);
-		}
 	}
 
 	private function checkRequirements() {
